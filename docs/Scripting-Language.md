@@ -133,8 +133,8 @@ if the script init fails an error code is reported:
 number of variables is only limited by RAM. you will probably get a memory error when you define to many variables.
 you may increase the number of allowed array and the maximum string size defines in user_config_override  
 defaults and override defines:  
-Number of filters (arrays) = 5 (override #define MAXFILT)  
-Max string size            = 20 (increase with >D size up to default default 48) (override #define SCRIPT_MAXSSIZE)     
+Number of filters (arrays) = 5 (override MAXFILT)  
+Max string size            = 20 (increase with >D size up to default default 48) (override SCRIPT_MAXSSIZE)     
 
 
 
@@ -159,7 +159,7 @@ If you're used to working with Visual Studio Code, you can use [this extension](
   
 `script?<var>` queries a script variable `var`  
 
-`scriptsize N` sets the amount of script source code allowed between 1000 and max defined during compile (with #define UFSYS_SIZE)    
+`scriptsize N` sets the amount of script source code allowed between 1000 and max defined during compile (with UFSYS_SIZE)    
 
 - The script itself can't be specified because the size would not fit the MQTT buffers
 
@@ -167,7 +167,7 @@ If you're used to working with Visual Studio Code, you can use [this extension](
 _Section descriptors (e.g., `>E`) are **case sensitive**_  
 a valid script must start with >D in the first line  
 `>D ssize`   
-  `ssize` = optional max string size (default=19, max=48 unless increased with `#define SCRIPT_MAXSSIZE`)  
+  `ssize` = optional max string size (default=19, max=48 unless increased with `SCRIPT_MAXSSIZE`)  
   define and init variables here, must be the first section, no other code allowed  
   `p:vname`  
   specifies permanent variables. The number of permanent variables is limited by Tasmota rules space (50 bytes) - numeric variables are 4 bytes; string variables are one byte longer than the length of string.  p vars are stored sequentially in the order of defintion.
@@ -187,7 +187,7 @@ therefore when specifing permanent variables, add newly defined ones always at t
   specifies a moving average filter variable with 8 entries (for smoothing data, should be also used to define arrays)  
   (max 5 filters in total m+M) optional another filter length (1..127) can be given after the definition.  
   Filter vars can be accessed also in indexed mode `vname[x]` (x = `1..N`, x = `0` returns current array index pointer (may be set also), x = `-1` returns array length, x = `-2` returns array average)
-  Using this filter, vars can be used as arrays, #define LARGE_ARRAYS allows for arrays up to 1000 entries  
+  Using this filter, vars can be used as arrays, LARGE_ARRAYS allows for arrays up to 1000 entries  
   array may also be permanent by specifying an extra `:p`  
   `m:p:vname`   
   defines a permanent array. Keep in mind however that in 1M Flash standard configurations you only have 50 bytes permanent storage which stands for a maximum of 12 numbers. (see list above for permanent storage in other configurations)  
@@ -326,7 +326,7 @@ read button state (x = `1.. MAX_KEYS`)
     ```
   
 `>J`  
-The lines in this section are published via MQTT in a JSON payload on [TelePeriod](Commands.md#teleperiod). ==Requires compiling with `#define USE_SCRIPT_JSON_EXPORT `.==  
+The lines in this section are published via MQTT in a JSON payload on [TelePeriod](Commands.md#teleperiod). ==Requires compiling with `USE_SCRIPT_JSON_EXPORT `.==  
 
 `>W`  
 The lines in this section are displayed in the web UI main page. ==Requires compiling with `#define USE_SCRIPT_WEB_DISPLAY`.== 
@@ -584,12 +584,12 @@ If a Tasmota `SENSOR` or `STATUS` or `RESULT` message is not generated or a `Var
 `sf(F)` = sets the CPU Frequency (ESP32) to 80,160,240 Mhz, returns current Freq.  
 `s(x)` = explicit conversion from number x to string  may be preceded by precision digits e.g. s(2.2x) = use 2 digits before and after decimal point  
   
-I2C support #define USE_SCRIPT_I2C  
+## I2C support #define USE_SCRIPT_I2C  
 `ia(AA)`, `ia2(AA)` test and set I2C device with address AA (on BUS 1 or 2), returns 1 if device is present  
 `iw(aa val)` , `iw1(aa val)`, `iw2(aa val)`, `iw3(aa val) `write val to register aa (1..3 bytes), if in aa bit 15 is set no destination register is transfered (needed for some devices), if bit 14 is set byte order is reversed  
 `ir(aa)`, `ir1(aa)`, `ir2(aa)`, `ir3(aa)` read 1..3 bytes from register aa  
  
-Onewire support #define USE_SCRIPT_ONEWIRE  
+## Onewire support #define USE_SCRIPT_ONEWIRE  
 support for onewire either directly or via serial port with onewire bus driver DS2480B  
 `ow(SEL <opt PAR>)`
     SEL 0 = init bus with pin number N (if bit 15 ist set, select serial DS2480B, lsb = rec pin, msb = trx pin)  
@@ -605,7 +605,7 @@ support for onewire either directly or via serial port with onewire bus driver D
     SEL 10-18 = get byte (1-8) of adress from index PAR  
     SEL 99 = delete bus driver  
     
-Serial IO support #define USE_SCRIPT_SERIAL  
+## Serial IO support #define USE_SCRIPT_SERIAL  
 `so(RXPIN TXPIN BR)` open serial port with RXPIN, TXPIN and baud rate BR with 8N1 serial mode (-1 for pin means don't use)  
 `so(RXPIN TXPIN BR MMM)` open serial port with RXPIN, TXPIN and baud rate BR and serial mode e.g 7E2 (all 3 modechars must be specified)  
 `so(RXPIN TXPIN BR MMM BSIZ)` open serial port with RXPIN, TXPIN and baud rate BR and serial mode e.g 7E2 (all 3 modechars must be specified) and serial IRW buffer size  
@@ -623,14 +623,14 @@ Serial IO support #define USE_SCRIPT_SERIAL
 `swa(ARRAY len (flags))` send len bytes of an array to serial port, if flags is set Modbus cmd is assumed and cksum is calculated, 0 = standard Modbus, 1 = Rec BMA mode  
 `smw(ADDR MODE NUMBER)` send a value with checksum to MODBUS Address, MODE 0 = uint16, 1 = uint32, 3 = float  
   
-SPI IO support #define `USE_SCRIPT_SPI`  
+## SPI IO support #define `USE_SCRIPT_SPI`  
 `spi(0 SCLK MOSI MISO)` defines a software SPI port with pin numbers used for SCLK, MOSI, MISO.  
 `spi(0 -1 freq)` defines a hardware SPI port with pin numbers defined by Tasmota GPIO definition with bus frequency in Mhz.  
 `spi(0 -2 freq)` defines a hardware SPI port 2 on ESP32 with pin numbers defined by Tasmota GPIO definition.  
 `spi(1 N GPIO)` sets the CS pin with index N (1..4) to pin Nr GPIO.  
 `spi(2 N ARRAY LEN S)` sends and receives an ARRAY with LEN values with S (1..3) (8,16,24 bits) if N==-1 CS is ignored. If S=4, CS is raised after each byte.
 
-TCP server support #define `USE_SCRIPT_TCP_SERVER`  
+## TCP server support #define `USE_SCRIPT_TCP_SERVER`  
 `wso(port)` start a tcp stream server at port  
 `wsc()` close tcp stream server  
 `wsa()` return bytes available on tcp stream  

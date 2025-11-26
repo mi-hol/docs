@@ -116,11 +116,11 @@ after initialization the script reports some info in the console e.g:
 nv = number of used variables in total (numeric and strings)  
 tv = number of used string variables  
 vns = total size of name strings in bytes (default: 4095). To extend the size use #define SCRIPT_LARGE_VNBUFF <int> (int may not exceed ??)  
-vmem = used heap ram by the script in bytes  (psram if available)  
+vmem = used heap ram by the script in bytes (psram if available)  
 smem = used script (text) memory in bytes (psram if available)  
 gmem = used script global static memory in bytes  
 pmem = used script permanent memory in bytes  
-tmem = used script memory total in bytes   
+tmem = used script memory total in bytes  
 
 if the script init fails an error code is reported:    
 -4 = not enough memory  
@@ -128,11 +128,11 @@ if the script init fails an error code is reported:
 -6 = too many arrays defined  
 -7 = not enough memory  
 
-number of variables is only limited by RAM. you will probably get a memory error when you define to many variables.
-you may increase the number of allowed array and the maximum string size defines in user_config_override  
-defaults and override defines:  
-Number of filters (arrays) = 10 (override #define MAXFILT)  
-Max string size            = 20 (increase with >D n, n up to SCRIPT_MAXSSIZE, default 255) (override #define SCRIPT_MAXSSIZE)     
+Number of variables is only limited by RAM. An error code will be raised in case of too many variables defined in script.
+To increase the number of allowed array and the maximum string size use the file "user_config_override.ini".  
+Defaults and override defines:  
+Number of filters (arrays) = 10 (to override #define MAXFILT)  
+Max string size = 20 (increase with >D <int>, <int> up to SCRIPT_MAXSSIZE (default: 255) (to override #define SCRIPT_MAXSSIZE)     
 
 
 

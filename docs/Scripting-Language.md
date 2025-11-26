@@ -115,7 +115,7 @@ after initialization the script reports some info in the console e.g:
 `00:00:00.043 SCR: nv=15, tv=1, vns=83, vmem=895, smem=8192, gmem=588, pmem=0, tmem=9758`  
 nv = number of used variables in total (numeric and strings)  
 tv = number of used string variables  
-vns = total size of name strings in bytes (default: 4095). To extend the size use #define SCRIPT_LARGE_VNBUFF <int> (int may not exceed ??)  
+vns = total size of name strings in bytes (default: 255). To extend the size use #define SCRIPT_LARGE_VNBUFF <int> (int may not exceed 4095)  
 vmem = used heap ram by the script in bytes (psram if available)  
 smem = used script (text) memory in bytes (psram if available)  
 gmem = used script global static memory in bytes  
@@ -161,7 +161,7 @@ If you're used to work with Visual Studio Code, you can use [this extension](htt
   - Can be used to set variables, e.g., `script >mintmp=15`  
   - Multiple statements can be specified by separating each with a semicolon, e.g. `script >mintmp=15;maxtemp=40`  
   
-  - `script?<var>` queries a script variable `var`  
+  - `script ?<var>` queries a script variable `var`  
 
 - `scriptsize N` sets the amount of script source code allowed between 1000 and max defined during compile (with #define UFSYS_SIZE)    
 - The script itself can't be specified because the size would not fit the MQTT buffers
@@ -175,15 +175,17 @@ a valid script must start with >D in the first line
   `ssize` = optional max string size (default=19, max=255)  
   define and init variables here, must be the first section, no other code allowed  
   `p:vname`  
-  specifies permanent variables. The number of permanent variables is limited by Tasmota rules space (50 bytes) - numeric variables are 4 bytes; string variables are one byte longer than the length of string.  p vars are stored sequentially in the order of defintion.
-therefore when specifing permanent variables, add newly defined ones always at the end of already defined p vars. otherwise variables are mixed up and string variables may even be destroyed.  
+  specifies permanent variables. The number of permanent variables is limited by Tasmota rules space (50 bytes) - numeric variables are 4 bytes; 
+  string variables are one byte longer than the length of string.  p vars are stored sequentially in the order of defintion.
+  Therefore when specifing permanent variables, add newly defined ones always at the end of already defined p vars! Otherwise variables are mixed up and string variables may even be destroyed.  
   `t:vname`   
   specifies countdown timers, if >0 they are decremented in seconds until zero is reached. see example below  
   `i:vname`   
   specifies auto increment counters if =0 (in seconds)  
   `g:vname`   
   specifies global variable which is linked to all global variables with the same definition on all devices in the homenet.
-  when a variable is updated in one device it is instantly updated in all other devices. if a section >G exists it is executed when a variable is updated from another device (this is done via UDP-multicast, so not always reliable) the global variable receiver may be reset by cmd `gvr`  
+  When a variable is updated in one device it is instantly updated in all other devices. If a section >G exists it is executed when a variable is updated from another device.
+  This is done via UDP-multicast, so not always reliable!. The global variable receiver may be reset by cmd `gvr`.  
   `I:vname`   
   specifies an integer 32 bit variable instead of float. (limited support) integer constants must be preceeded by '#'  
   `m:vname`   
@@ -191,11 +193,13 @@ therefore when specifing permanent variables, add newly defined ones always at t
   `M:vname`   
   specifies a moving average filter variable with 8 entries (for smoothing data, should be also used to define arrays)  
   (max 10 filters in total m+M) optional another filter length (1..127) can be given after the definition.  
-  Filter vars can be accessed also in indexed mode `vname[x]` (x = `1..N`, x = `0` returns current array index pointer (may be set also), x = `-1` returns array length, x = `-2` returns array average,x = `-3` returns array sum)
+  Filter vars can be accessed also in indexed mode `vname[x]` (x = `1..N`, x = `0` returns current array index pointer (may be set also), 
+  x = `-1` returns array length, x = `-2` returns array average,x = `-3` returns array sum)
   Using this filter, vars can be used as arrays, #define LARGE_ARRAYS allows for arrays up to 1000 entries  
   array may also be permanent by specifying an extra `:p`  
   `m:p:vname`   
-  defines a permanent array. Keep in mind however that in 1M Flash standard configurations you only have 50 bytes permanent storage which stands for a maximum of 12 numbers. (see list above for permanent storage in other configurations)  
+  defines a permanent array. Keep in mind however that in 1M Flash standard configurations you only have 50 bytes permanent storage which stands for a maximum of 12 numbers. 
+  (see list above for permanent storage in other configurations)  
   arrays may also be preset in auto increment mode array=X sets the value at index array[0] and increments the index by 1.  
   array = {x y z} sets 3 values in an array from index array[0]  
 
@@ -229,7 +233,8 @@ Executed on restart. p vars are saved automatically after this call
 ### >T
 
 Executed at least at [`TelePeriod`](Commands.md#teleperiod) time (`SENSOR` and `STATE`) but mostly faster up to every 100 ms, only put `tele-` vars in this section  
-Remark: JSON variable names (like all others) may not contain math operators like - , you should set [`SetOption64 1`](Commands.md#setoption64) to replace `-` (_dash_) with `_` (_underscore_). Zigbee sensors will not report to this section, use E instead.
+Remark: JSON variable names (like all others) may not contain math operators like - , you should set [`SetOption64 1`](Commands.md#setoption64) to replace `-` (_dash_) with `_` (_underscore_). 
+Zigbee sensors will not report to this section, use E instead.
 
 ### >H
 

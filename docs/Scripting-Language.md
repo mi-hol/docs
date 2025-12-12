@@ -411,7 +411,7 @@ remark: state variable names used for IO in the web interface may not contain an
  `xs` = optional xs (default 200) 
  `txt1` = text of 1. entry  
  `txt2` = text of 2. entry and so on  
- if txt1 text is "#g" a list of GPIOs ist presented, those already used greyed out  
+ if txt1 text is "#g" a list of GPIOs ist presented, those already used are greyed out  
  if txt1 starts with # and a number range like "#5-10" an number range from 5 to 10 ist presented  
  
  special selector for SML descriptor files  
